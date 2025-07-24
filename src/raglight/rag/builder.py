@@ -174,7 +174,7 @@ class Builder:
         logging.info("✅ Reasoning LLM created")
         return self
 
-    def build_rag(self, k: int = 10) -> RAG:
+    def build_rag(self, k: int, rerank_k: int) -> RAG:
         """
         Builds the RAG pipeline with the configured components.
 
@@ -195,7 +195,7 @@ class Builder:
             raise ValueError("Embeddings Model is required")
         logging.info("⏳ Building the RAG pipeline...")
         self.rag = RAG(
-            self.embeddings, self.vector_store, self.llm, k, self.cross_encoder
+            self.embeddings, self.vector_store, self.llm, k, rerank_k, self.cross_encoder
         )
         logging.info("✅ RAG pipeline created")
         return self.rag

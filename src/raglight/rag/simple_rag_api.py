@@ -40,6 +40,7 @@ class RAGPipeline:
         database: str = vector_store_config.database
         self.file_extension: str = vector_store_config.file_extension
         model_name: str = config.llm
+        rerang_k: int = config.rerank_k
         provider: str = config.provider
         embeddings_provider: str = vector_store_config.provider
         stream: bool = config.stream
@@ -53,7 +54,7 @@ class RAGPipeline:
                 collection_name=collection_name,
             )
             .with_llm(provider, model_name=model_name, system_prompt=system_prompt)
-            .build_rag(k=k)
+            .build_rag(k=k, rerank_k=rerang_k)
         )
         self.github_scrapper: GithubScrapper = GithubScrapper()
 

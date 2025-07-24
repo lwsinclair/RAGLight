@@ -46,6 +46,7 @@ class RAG:
         vector_store: VectorStore,
         llm: LLM,
         k: int,
+        rerank_k: int = None,
         cross_encoder_model: CrossEncoderModel = None,
         stream: bool = False,
     ) -> None:
@@ -56,6 +57,7 @@ class RAG:
             embedding_model (EmbeddingsModel): The embedding model used for vectorization.
             vector_store (VectorStore): The vector store for retrieving relevant documents.
             llm (LLM): The language model for generating answers.
+            rerank_k (int): The number of top documents to rerank.
         """
         self.embeddings: EmbeddingsModel = embedding_model.get_model()
         self.cross_encoder: CrossEncoderModel = (
@@ -63,6 +65,7 @@ class RAG:
         )
         self.vector_store: VectorStore = vector_store
         self.llm: LLM = llm
+        self.rerank_k: int = rerank_k
         self.k: int = k
         self.stream: bool = stream
         self.graph: Any = (
@@ -97,6 +100,7 @@ class RAG:
             Dict[str, str]: A dictionary containing the generated answer under the key 'answer'.
         """
         docs_content = "\n\n".join(doc.page_content for doc in state["context"])
+        print('context : ', state['context'])
         prompt_json = {"question": state["question"], "context": docs_content}
         if self.stream:
             response = self.llm.generate_streaming(prompt_json)
@@ -122,6 +126,8 @@ class RAG:
                 [(question, doc_text) for doc_text in doc_texts]
             )
             ranked_docs = [doc for _, doc in sorted(zip(scores, docs), reverse=True)]
+            if k :
+                ranked_docs = ranked_docs[:k]
         except:
             ranked_docs = state["context"]
         return {"context": ranked_docs}

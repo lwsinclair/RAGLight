@@ -12,6 +12,7 @@ class RAGConfig:
     llm: str
     provider: str = field(default=Settings.OLLAMA)
     system_prompt: str = field(default=Settings.DEFAULT_SYSTEM_PROMPT)
-    k: int = field(default=2)
+    k: int = field(default=10)
+    rerank_k: int = field(default=10)
     stream: int = field(default=False)
     knowledge_base: List[DataSource] = field(default=None)
